@@ -56,7 +56,7 @@ export function EventList() {
     );
   }
 
-  // @note sort events: active first, then upcoming, then ended
+  // @note sort events: upcoming first, then active, then ended
   const now = new Date();
   const sortedEvents = [...events].sort((a, b) => {
     const aEnd = new Date(a.eventTime.endUtc);
@@ -69,12 +69,20 @@ export function EventList() {
     const aStarted = now >= aStart;
     const bStarted = now >= bStart;
 
-    // @note active events first
-    if (aStarted && !aExpired && (!bStarted || bExpired)) return -1;
-    if (bStarted && !bExpired && (!aStarted || aExpired)) return 1;
+    const aUpcoming = !aStarted && !aExpired;
+    const bUpcoming = !bStarted && !bExpired;
+    const aActive = aStarted && !aExpired;
+    const bActive = bStarted && !bExpired;
 
-    // @note upcoming events second
-    if (!aStarted && !bStarted) return aStart.getTime() - bStart.getTime();
+    // @note upcoming events first
+    if (aUpcoming && !bUpcoming) return -1;
+    if (bUpcoming && !aUpcoming) return 1;
+    if (aUpcoming && bUpcoming) return aStart.getTime() - bStart.getTime();
+
+    // @note active events second
+    if (aActive && !bActive) return -1;
+    if (bActive && !aActive) return 1;
+    if (aActive && bActive) return aEnd.getTime() - bEnd.getTime();
 
     // @note expired events last
     if (aExpired && bExpired) return bEnd.getTime() - aEnd.getTime();
