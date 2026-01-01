@@ -15,7 +15,8 @@ export function Navbar() {
           href="/"
           className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
         >
-          {t('navTitle')}
+          <span className="hidden sm:inline">{t('navTitle')}</span>
+          <span className="sm:hidden">F.I.E</span>
         </Link>
         <div className="flex items-center gap-4">
           <Link
